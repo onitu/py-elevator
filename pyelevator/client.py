@@ -36,7 +36,19 @@ class Elevator(Client):
         pass
 
     def Get(self, key, *args, **kwargs):
-        datas = self.send(self.db_uid, 'GET', [key], *args, **kwargs)
+        has_default = 'default' in kwargs
+        if has_default:
+            # The 'default' param shouldn't be sent to the server
+            default = kwargs.pop('default')
+
+        try:
+            datas = self.send(self.db_uid, 'GET', [key], *args, **kwargs)
+        except KeyError as e:
+            if has_default:
+                return default
+            else:
+                raise e
+
         return datas[0]
 
     def MGet(self, keys, *args, **kwargs):
