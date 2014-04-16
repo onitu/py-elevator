@@ -163,7 +163,7 @@ class ElevatorTest(unittest2.TestCase):
         for r in res:
             self.assertIsNotNone(r)
             self.assertGreaterEqual(int(r), 0)
-            self.assertLessEqual(int(r), 9)
+            self.assertLessEqual(int(r), 19)
 
     def test_range_of_len_one(self):
         res = self.client.Range('1', '1')
@@ -214,7 +214,7 @@ class ElevatorTest(unittest2.TestCase):
         for r in res:
             self.assertIsNotNone(r)
             self.assertGreaterEqual(int(r), 0)
-            self.assertLessEqual(int(r), 9)
+            self.assertLessEqual(int(r), 19)
 
     def test_slice_of_len_ten_without_values(self):
         res = self.client.Slice('0', 9, include_value=False)
