@@ -101,6 +101,12 @@ Interact with a database
     >>> E.MGet(['abc', 'easy as', 'you and me'])
     ['123', 'do re mi', None]
     >>> E.Delete('abc')
+    >>> E.Get('abc')
+    KeyError: "Key 'totostsor' does not exist"
+    >>> E.Get('abc', default=None)
+    >>> E.Get('abc', default='foo')
+    'foo'
+
     >>> for i in xrange(10):
     ...     E.Put(str(i), str(i))
 
@@ -198,6 +204,7 @@ Database store management
 **Nota** : Every functions are handling a kwarg timeout param which defines in seconds how long the client should wait for a server response. You might wanna set this to a high value when processing large datas sets (Range/Rangeiter/MGet).
 
 * ``Get`` : *key*, *value*
+    Accepts a `default` keyword argument. If present, it will be returned instead of raising a `KeyError` if the key doesn't exist.
 * ``Put`` : *key*, *value*
 * ``Delete`` : *key*
 * ``Range`` : *key_from*, *key_to*, *include_key=True*, *include_value=True*
