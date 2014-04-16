@@ -326,7 +326,8 @@ class ElevatorTest(unittest2.TestCase):
 
         self.assertIsInstance(batch, WriteBatch)
         self.assertEqual(batch.endpoint, self.client.endpoint)
-        self.assertEqual(batch.protocol, self.client.protocol)
+        self.assertEqual(batch.transport, self.client.transport)
+        self.assertEqual(batch.host, self.client.host)
         self.assertEqual(batch.db_uid, self.client.db_uid)
         self.assertEqual(batch.db_name, self.client.db_name)
         self.assertTrue(batch.status == WriteBatch.STATUSES.ONLINE)
