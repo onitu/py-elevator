@@ -92,6 +92,23 @@ class ElevatorTest(unittest2.TestCase):
     def test_get_with_invalid_key(self):
         self.client.Get('abc')
 
+    def test_get_existing_key_with_default(self):
+        value = self.client.Get('1', default='foo')
+
+        self.assertIsInstance(value, str)  # No error (tuple) returned
+        self.assertEqual(value, '11')
+
+    def test_get_non_existing_key_with_default(self):
+        value = self.client.Get('abc', default='foo')
+
+        self.assertIsInstance(value, str)
+        self.assertEqual(value, 'foo')
+
+    def test_get_non_existing_key_with_default_none(self):
+        value = self.client.Get('abc', default=None)
+
+        self.assertEqual(value, None)
+
     def test_mget_with_valid_keys(self):
         values = self.client.MGet(['1', '2', '3'])
 
