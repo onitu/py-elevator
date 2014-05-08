@@ -17,6 +17,7 @@ def gen_test_conf():
             "activity_log": tempfile.mkstemp(suffix=".log", dir="/tmp")[1],
             "errors_log": tempfile.mkstemp(suffix="_errors.log", dir="/tmp")[1],
             "max_cache_size": 1024,
+            "majordome_interval": 0
     }
     config = ConfigParser.RawConfigParser()
     config.add_section('global')
