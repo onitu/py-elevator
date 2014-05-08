@@ -53,7 +53,8 @@ class Elevator(Client):
     def Range(self, start=None, limit=None, *args, **kwargs):
         include_value = kwargs.pop('include_value', True)
         include_key = kwargs.pop('include_key', True)
-        params = [start, limit, include_key, include_value]
+        prefix = kwargs.pop('prefix', None)
+        params = [start, limit, include_key, include_value, prefix]
 
         return self.send(self.db_uid, 'RANGE', params, *args, **kwargs)
 
