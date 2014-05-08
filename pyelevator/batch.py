@@ -28,7 +28,13 @@ class WriteBatch(Client):
     def __exit__(self, type, value, traceback):
         self.Write()
 
-    def Put(self, key, value):
+    def Put(self, key, value, serialize=None, **kwargs):
+        if serialize is None:
+            serialize = self.serialize
+
+        if serialize:
+            value = self._pack(value, **kwargs)
+
         self.container.append([SIGNAL_BATCH_PUT, key, value])
 
     def Delete(self, key):
