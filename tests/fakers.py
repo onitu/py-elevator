@@ -12,6 +12,7 @@ def gen_test_conf():
             "pidfile": tempfile.mkstemp(suffix=".pid", dir='/tmp')[1],
             "databases_storage_path": tempfile.mkdtemp(dir='/tmp'),  # Will be randomly set later
             "database_store": tempfile.mkstemp(suffix=".json", dir="/tmp")[1],
+            "transport": 'tcp',
             "bind": '127.0.0.1',
             "port": str(random.randint(4142, 60000)),
             "activity_log": tempfile.mkstemp(suffix=".log", dir="/tmp")[1],
