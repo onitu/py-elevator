@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 
 import zmq
+import msgpack
 
 from .constants import FAILURE_STATUS
 from .message import Request, Response, ResponseHeader
@@ -25,6 +26,10 @@ class Client(object):
 
         self.context = None
         self.socket = None
+
+        self.serialize = kwargs.pop('serialize', True)
+        self.use_list = kwargs.pop('use_list', True)
+        self.use_bin_type = kwargs.pop('use_bin_type', True)
 
         self._timeout = sec_to_ms(kwargs.pop('timeout', 1))
         self._status = self.STATUSES.OFFLINE
@@ -139,3 +144,16 @@ class Client(object):
         self.timeout = orig_timeout
 
         return response.datas
+
+    def _pack(self, content, use_bin_type=None, **kwargs):
+        if use_bin_type is None:
+            use_bin_type = self.use_bin_type
+
+        return msgpack.packb(content, use_bin_type=use_bin_type)
+
+
+    def _unpack(self, content, use_list=None, **kwargs):
+        if use_list is None:
+            use_list = self.use_list
+
+        return msgpack.unpackb(content, use_list=use_list)

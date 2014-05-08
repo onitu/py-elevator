@@ -36,6 +36,7 @@ class Elevator(Client):
         pass
 
     def Get(self, key, *args, **kwargs):
+        serialize = kwargs.pop('serialize', self.serialize)
         has_default = 'default' in kwargs
         if has_default:
             # The 'default' param shouldn't be sent to the server
@@ -49,12 +50,24 @@ class Elevator(Client):
             else:
                 raise e
 
-        return datas[0]
+        if serialize:
+            return self._unpack(datas[0], **kwargs)
+        else:
+            return datas[0]
 
     def MGet(self, keys, *args, **kwargs):
-        return self.send(self.db_uid, 'MGET', [keys], *args, **kwargs)
+        serialize = kwargs.pop('serialize', self.serialize)
+        datas = self.send(self.db_uid, 'MGET', [keys], *args, **kwargs)
+
+        if serialize:
+            return [self._unpack(d, **kwargs) for d in datas]
+        else:
+            return datas
 
     def Put(self, key, value, *args, **kwargs):
+        serialize = kwargs.pop('serialize', self.serialize)
+        if serialize:
+            value = self._pack(value, **kwargs)
         self.send(self.db_uid, 'PUT', [key, value], *args, **kwargs)
         return
 
@@ -63,18 +76,36 @@ class Elevator(Client):
         return
 
     def Range(self, start=None, limit=None, *args, **kwargs):
+        serialize = kwargs.pop('serialize', self.serialize)
         include_value = kwargs.pop('include_value', True)
         include_key = kwargs.pop('include_key', True)
         params = [start, limit, include_key, include_value]
 
-        return self.send(self.db_uid, 'RANGE', params, *args, **kwargs)
+        datas = self.send(self.db_uid, 'RANGE', params, *args, **kwargs)
+
+        if serialize and include_value:
+            if include_key:
+                return [[k, self._unpack(d, **kwargs)] for k, d in datas]
+            else:
+                return [self._unpack(d, **kwargs) for d in datas]
+        else:
+            return datas
 
     def Slice(self, key_from=None, offset=None, *args, **kwargs):
+        serialize = kwargs.pop('serialize', self.serialize)
         include_value = kwargs.pop('include_value', True)
         include_key = kwargs.pop('include_key', True)
         params = [key_from, offset, include_key, include_value]
 
-        return self.send(self.db_uid, 'SLICE', params, *args, **kwargs)
+        datas = self.send(self.db_uid, 'SLICE', params, *args, **kwargs)
+
+        if serialize and include_value:
+            if include_key:
+                return [[k, self._unpack(d)] for k, d in datas]
+            else:
+                return [self._unpack(d) for d in datas]
+        else:
+            return datas
 
     def RangeIter(self, key_from=None, key_to=None, *args, **kwargs):
         include_value = kwargs.pop('include_value', True)
