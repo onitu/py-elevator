@@ -6,6 +6,8 @@
 
 from __future__ import absolute_import
 
+from threading import Lock
+
 import zmq
 
 from .constants import FAILURE_STATUS
@@ -25,6 +27,8 @@ class Client(object):
 
         self.context = None
         self.socket = None
+
+        self._lock = Lock()
 
         self._timeout = sec_to_ms(kwargs.pop('timeout', 1))
         self._status = self.STATUSES.OFFLINE
@@ -118,13 +122,14 @@ class Client(object):
         if timeout > 0:
             self.timeout = timeout
 
-        self.socket.send_multipart([Request(db_uid=db_uid,
-                                            command=command,
-                                            args=arguments,
-                                            meta={'compression': compression})],)
-
         try:
-            raw_header, raw_response = self.socket.recv_multipart()
+            with self._lock:
+                self.socket.send_multipart([Request(db_uid=db_uid,
+                                                    command=command,
+                                                    args=arguments,
+                                                    meta={'compression': compression})],)
+                raw_header, raw_response = self.socket.recv_multipart()
+
             header = ResponseHeader(raw_header)
             response = Response(raw_response, compression=compression)
 
