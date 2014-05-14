@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import imp
 from setuptools import setup
 
 root = os.path.abspath(os.path.dirname(__file__))
 
-version = __import__('pyelevator').__version__
+version = imp.load_source('', 'pyelevator/version.py').__version__
 
 with open(os.path.join(root, 'README.rst')) as f:
     README = f.read()
@@ -16,7 +17,7 @@ setup(
     version=version,
     license='MIT',
 
-    description = 'Python client for on-disk key/value database Elevator',
+    description='Python client for on-disk key/value database Elevator',
     long_description=README,
 
     author='Oleiade',
